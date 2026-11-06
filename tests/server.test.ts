@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { startServer } from "../src/server.js";
 
-let server: ReturnType<typeof startServer>;
+let server: Awaited<ReturnType<typeof startServer>>;
 let base: string;
 let dir: string;
 const TOKEN = "test-token-0123456789abcdef";
