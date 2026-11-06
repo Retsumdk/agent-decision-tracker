@@ -1,0 +1,33 @@
+agent-decision-tracker — deterministic demo
+journal: <tempdir>/demo.jsonl
+
+[1] recorded decision dec-7976f731ca60d7321a1aec53
+    agent=planner task=choose retry policy for outbound webhooks
+    chosen=exponential confidence=0.80 (calibrated)
+    options: exponential=0.82 fixed=0.45 none=0.10
+    at=2025-07-25T12:36:40.000Z
+
+[2] recorded decision dec-6337146a5d2aada883e0fe55
+    agent=scheduler task=choose backoff cap for the retry policy
+    parents: dec-7976f731ca60d7321a1aec53
+    chosen=cap-30s confidence=0.55 (speculative)
+
+[3] attribution chain for dec-6337146a5d2aada883e0fe55:
+    depth=1 dec-7976f731ca60d7321a1aec53 (parent)
+    totalAncestors=1
+
+[4] outcomes recorded:
+    dec-7976f731ca60d7321a1aec53 -> success
+    dec-6337146a5d2aada883e0fe55 -> failure
+
+[5] influence of dec-7976f731ca60d7321a1aec53:
+    descendants=1 descendantsWithOutcomes=1
+    outcomeStatuses: success=1 failure=1
+
+[6] calibration (scored=2, unscored=0):
+    conf 40-59: n=1 observed=0.0% delta=-0.55
+    conf 80-99: n=1 observed=100.0% delta=+0.20
+
+[7] stats: decisions=2 agents=2 outcomes=2
+    decisionsWithOutcomesPct=100 meanConfidence=0.675
+    verify: ok=true records=4

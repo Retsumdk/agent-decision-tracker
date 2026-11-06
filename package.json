@@ -1,17 +1,62 @@
 {
   "name": "agent-decision-tracker",
-  "description": "Causal decision logging and audit trail system for AI agents with outcome tracking, confidence recording, and reasoning attribution",
   "version": "1.0.0",
+  "description": "Causal decision logging and audit trails for AI agents: outcome tracking, confidence recording, and reasoning attribution",
   "type": "module",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./engine": {
+      "types": "./dist/engine.d.ts",
+      "default": "./dist/engine.js"
+    }
+  },
+  "bin": {
+    "adt": "./dist/cli-main.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
+    "build": "tsc",
+    "prepare": "tsc",
     "test": "bun test",
-    "build": "tsc"
+    "typecheck": "tsc -p tsconfig.tests.json",
+    "demo": "bun src/demo.ts",
+    "verify:demo": "bun src/demo.ts > /tmp/adt-demo-got.txt && diff -u demo-output.txt /tmp/adt-demo-got.txt"
   },
-  "dependencies": {
-    "commander": "^11.1.0"
+  "keywords": [
+    "agent",
+    "ai-agents",
+    "audit-trail",
+    "autonomous-agents",
+    "causality",
+    "decision-logging",
+    "observability",
+    "reasoning",
+    "typescript"
+  ],
+  "engines": {
+    "node": ">=18"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Retsumdk/agent-decision-tracker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Retsumdk/agent-decision-tracker/issues"
+  },
+  "homepage": "https://github.com/Retsumdk/agent-decision-tracker#readme",
   "devDependencies": {
-    "bun-types": "^1.0.0",
-    "typescript": "^5.3.0"
+    "@types/node": "^22.10.2",
+    "bun-types": "^1.1.34",
+    "typescript": "^5.7.2"
   }
 }

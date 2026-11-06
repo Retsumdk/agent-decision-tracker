@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install
+      - run: bunx tsc -p tsconfig.tests.json
+      - run: bun test
+      - name: demo output is deterministic
+        run: bun src/demo.ts > /tmp/demo-actual.txt && diff -u demo-output.txt /tmp/demo-actual.txt
+      - name: build emits dist
+        run: bunx tsc && test -f dist/cli-main.js
+
+  node-install:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: install from GitHub and exercise the library
+        run: |
+          cd "$(mktemp -d)"
+          npm init -y >/dev/null 2>&1
+          npm install github:Retsumdk/agent-decision-tracker >/dev/null
+          node --input-type=module -e '
+            import { DecisionTracker } from "agent-decision-tracker";
+            import { mkdtempSync } from "node:fs";
+            import { join } from "node:path";
+            import { tmpdir } from "node:os";
+            const t = DecisionTracker.create(join(mkdtempSync(join(tmpdir(), "adt-")), "j.jsonl"));
+            const d = t.record({
+              agentId: "probe", task: "install probe",
+              options: [{ option: "ok", score: 1 }], chosen: "ok",
+              confidence: 0.9, confidenceBasis: "heuristic",
+              reasoning: { summary: "smoke probe" },
+            });
+            const o = t.recordOutcome({ decisionId: d.id, status: "success", actual: "installed" });
+            const v = t.verify();
+            if (!v.ok || v.records !== 2) throw new Error("verify failed");
+            console.log("GH_INSTALL_OK", d.id, o.id);
+          '
